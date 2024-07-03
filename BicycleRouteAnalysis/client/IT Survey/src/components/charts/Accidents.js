@@ -1,5 +1,4 @@
 import {useState, useEffect } from "react";
-
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -24,7 +23,7 @@ import {
     BarElement
   );
 
-export const Accidents = (values)=>{
+export const Accidents = ()=>{
     
     const [accidentChart , setAccidentChart] = useState({});
     useEffect(() => {
@@ -57,8 +56,8 @@ export const Accidents = (values)=>{
                                 backgroundColor: 'rgba(255, 99, 132, 0.2)',borderColor: 'rgba(255, 99, 132, 1)',borderWidth: 1,
                             }
                         ]
+                        }
                     }
-                }
                 ))
                 setAccidentChart(graph);
             }
@@ -77,18 +76,20 @@ export const Accidents = (values)=>{
       };
     return (
         Object.keys(accidentChart).length > 1 ? (
-            <div>
-                <h1>Accidents</h1>
-                {
-                    accidentChart.map((chart, index) => (
-                        <div key={index} style={{ marginBottom: '20px' }}>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Accidents</h1>
+                    </div>
+        
+                {accidentChart.map((chart, index) => (
+                    <div key={index} class="col-4">
                         <h3>{chart.severity}</h3>
-                        <Bar data={chart.data} options={options} />
-                        </div>
-                    ))
-                }
-            </div>
-
+                            <Bar data={chart.data} options={options} />
+                    </div>
+                ))}
+                </div>
+          </div>
         ) : null
     )
 }

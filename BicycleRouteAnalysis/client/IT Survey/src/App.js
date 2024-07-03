@@ -1,13 +1,11 @@
 import './App.css';
 import React , {useEffect, useState } from 'react';
 import axios from 'axios';
-import {Gender} from './components/Gender';
-import {Accidents} from './components/Accidents';
 
+import LeftNav from "../src/components/leftNav/leftNav";
 
 function App() {
 
-  const [accidents, setAccidents] = useState({});
   const [band, setBand] = useState({});
   const [gender , setGender] = useState({});
   const [graphList, setGraphList] = useState({});
@@ -19,10 +17,6 @@ function App() {
     })
     .catch(error=>{
       console.error('Error while fetching GraphList',error);
-    })
-    axios.get('http://127.0.0.1:5000/getAccidentSeverity')
-    .then(res =>{
-      setAccidents(res.data)
     })
     .catch(error =>{
       console.error('Error fetching data',error)
@@ -46,8 +40,11 @@ function App() {
   return (
     <div className="App">
       <h1>Bicycle Routes Analysis</h1>
-      <Gender values={gender} />
-      <Accidents values={accidents}/>
+
+      <LeftNav />
+      {/* <Gender values={gender}/>
+      <Accidents />
+      <AccidentsByWeek /> */}
     </div>
   );
 }

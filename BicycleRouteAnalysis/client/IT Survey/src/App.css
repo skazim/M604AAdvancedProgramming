@@ -1,5 +1,7 @@
+.body
 .App {
   margin: 30px;
+  background-color: red;
 }
 
 form {
@@ -35,4 +37,18 @@ button:disabled {
 .error {
   color: red;
   margin-top: 20px;
+}
+
+.gender{
+  margin: auto 30%
+}
+
+.accidents{
+  display: flex;
+  
+}
+.accidents .accidentsChart{
+  margin-bottom: 20px;
+  width: 40%;
+  padding: 2%;
 }

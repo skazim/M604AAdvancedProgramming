@@ -53,9 +53,15 @@ export const Gender = (values)=>{
     };
 
     return (
-        <div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
             <h1>Gender Analysis</h1>
-            <Bar data={data} options={options}/>
+            <div class="col-4">
+              <Bar data={data} options={options}/>
+            </div>
+          </div>
         </div>
+      </div>
     )
 }
