@@ -16,7 +16,11 @@ import json
 
 app = Flask(__name__)
 CORS(app)
-data = pd.read_csv('./data/RTADataset.csv')
+try:
+    bicycleRoutefile = pd.read_csv('./data/RTADataset.csv')
+except FileNotFoundError:
+    print("File not found")
+    bicycleRoutefile = None
 
 @app.route('/')
 def index():
@@ -37,72 +41,136 @@ def getGender():
 
 @app.route('/getAccidentSeverity', methods=["GET"])
 def getAccidentSeverity():
-    accidentSeverity =data.groupby(['Number_of_vehicles_involved', 'Accident_severity']).size().reset_index(name='Count').to_json(orient='records')
-    return jsonify(accidentSeverity=accidentSeverity)
+    try:
+        if(bicycleRoutefile!= None):
+            accidentSeverity =bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Accident_severity']).size().reset_index(name='Count').to_json(orient='records')
+            return jsonify(accidentSeverity=accidentSeverity)
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getAgeBand' ,methods=["GET"])
 def getAgeBand():
-    ageBandDriver = data['Age_band_of_driver'].value_counts().sort_index().to_dict()
-    ageBandCasuality = data['Age_band_of_casualty'].value_counts().sort_index().to_dict()
-    return jsonify({
-        "Age_band_of_driver" : ageBandDriver,
-        "Age_band_of_casualty" : ageBandCasuality
-    })
+    try:
+        if(bicycleRoutefile!= None):
+            ageBandDriver = bicycleRoutefile['Age_band_of_driver'].value_counts().sort_index().to_dict()
+            ageBandCasuality = bicycleRoutefile['Age_band_of_casualty'].value_counts().sort_index().to_dict()
+            return jsonify({"Age_band_of_driver" : ageBandDriver,"Age_band_of_casualty" : ageBandCasuality})
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getAccidentsByWeek')
 def getAccidentsByWeek():
-    return jsonify(accidentsByWeek=data.groupby('Day_of_week').size().reset_index(name='Count').to_json(orient='records'))
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(accidentsByWeek=bicycleRoutefile.groupby('Day_of_week').size().reset_index(name='Count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as c:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 
 @app.route('/getPedestrianMovement')
 def getpedestrianMovement():
-    data['Pedestrian_movement'] = data['Pedestrian_movement'].apply(shortText)
-    return jsonify(pedestrianMovement=data.groupby('Pedestrian_movement').size().reset_index(name='count').to_json(orient='records'))
+    try:
+        if(bicycleRoutefile!= None):
+            bicycleRoutefile['Pedestrian_movement'] = bicycleRoutefile['Pedestrian_movement'].apply(shortText)
+            return jsonify(pedestrianMovement=bicycleRoutefile.groupby('Pedestrian_movement').size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
+
 
 @app.route('/getDriversEducationLevel')
 def getDriversEducationLevel():
-    return jsonify(driversEducationLevel=data.groupby('Educational_level').size().reset_index(name='count').to_json(orient='records'))
-
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(driversEducationLevel=bicycleRoutefile.groupby('Educational_level').size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getCasualitieslist')
 def getCasualitieslist():
-    return jsonify(casualitieslist=data.groupby('Work_of_casuality').size().reset_index(name='count').to_json(orient='records'))
-
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(casualitieslist=bicycleRoutefile.groupby('Work_of_casuality').size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getTypeOfJunctions')
 def getTypeOfJunctions():
-    return jsonify(typeOfJunctions=data.groupby('Types_of_Junction').size().reset_index(name='count').to_json(orient='records'))
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(typeOfJunctions=bicycleRoutefile.groupby('Types_of_Junction').size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getNumberOfCasualites')
 def getNumberOfCasualites():
-    return jsonify(numberOfCasualites=data.groupby('Number_of_casualties').size().reset_index(name='count').to_json(orient='records'))
-
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(numberOfCasualites=bicycleRoutefile.groupby('Number_of_casualties').size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
+    
 @app.route('/getPairPlotCasualities')
 def getPairPlotCasualities():
-    return jsonify(pairPlotCasualities=data.groupby(['Number_of_vehicles_involved', 'Number_of_casualties']).size().reset_index(name='count').to_json(orient='records'))
-
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(pairPlotCasualities=bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Number_of_casualties']).size().reset_index(name='count').to_json(orient='records'))
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
 @app.route('/getModelAnalysis')
 def getModelAnalysis():
-    return jsonify(modelAnalysis(data))    
+    try:
+        if(bicycleRoutefile!= None):
+            return jsonify(modelAnalysis(bicycleRoutefile))  
+        else:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
 
-def modelAnalysis(data):
-    le= LabelEncoder()
-    data = data.apply(le.fit_transform)
 
-    x= data.drop('Accident_severity', axis=1)
-    y= data['Accident_severity']
+def modelAnalysis(bicycleRoutefile):
+    try:
+        if bicycleRoutefile is None:
+            raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
+        else:
+            le= LabelEncoder()
+            bicycleRoutefile = bicycleRoutefile.apply(le.fit_transform)
 
-    models={"LogisticRegression":LogisticRegression(),
-        "DecisionTreeClassifier":DecisionTreeClassifier(),
-        "SVM":SVC(),
-        "KNeighborsClassifier":KNeighborsClassifier(),
-        "GNB":GaussianNB(),
-       "RandomForestClassifier":RandomForestClassifier(),
-        "AdaBoostClassifier":AdaBoostClassifier(),
-        "GradientBoostingClassifier":GradientBoostingClassifier(),
-        }
-    return findModelAccuracy(models,x,y)
+            x= bicycleRoutefile.drop('Accident_severity', axis=1)
+            y= bicycleRoutefile['Accident_severity']
+
+            models={"LogisticRegression":LogisticRegression(),
+                "DecisionTreeClassifier":DecisionTreeClassifier(),
+                "SVM":SVC(),
+                "KNeighborsClassifier":KNeighborsClassifier(),
+                "GNB":GaussianNB(),
+            "RandomForestClassifier":RandomForestClassifier(),
+                "AdaBoostClassifier":AdaBoostClassifier(),
+                "GradientBoostingClassifier":GradientBoostingClassifier(),
+                }
+            return findModelAccuracy(models,x,y)
+    except Exception as e:
+        return jsonify({"File not found, please contact admin": str(e)}), 500
+
+
     
 def findModelAccuracy(models,x,y):
     xtr,xte,ytr,yte=train_test_split(x,y,test_size=0.2,random_state=0)
