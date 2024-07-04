@@ -68,7 +68,7 @@ def getAccidentsByWeek():
             return jsonify(accidentsByWeek=bicycleRoutefile.groupby('Day_of_week').size().reset_index(name='Count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
-    except Exception as c:
+    except Exception as e:
         return jsonify({"File not found, please contact admin": str(e)}), 500
 
 
