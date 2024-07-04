@@ -1,43 +1,39 @@
 import React from 'react';
-import { useEffect ,useState} from 'react';
-import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Accidents } from '../charts/Accidents';
 import { Gender } from '../charts/Gender';
-import { AccidentsByWeek } from '../charts/AccidentsByWeek';
+import { Predict } from '../predict/predict';
+
 
 const App = () => {
-    const [gender , setGender] = useState({});
-    useEffect (()=>{
-        axios.get('http://127.0.0.1:5000/getGender')
-        .then(res=>{
-        setGender(res.data)
-        })
-        .catch(error=>{
-        console.error('Error fetching columns',error);
-        })
-        
-    })
+  const genderData = {
+    category: ["Women", "Men", "Children"],
+    count: [50, 80, 30]
+  };
   return (
     <Router>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Accidents</Link>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span className="navbar-toggler-icon"></span>
+      </button>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <Link className="nav-link" to="/">Accidents</Link>
           </li>
-          <li>
-            <Link to="/gender">Gender</Link>
+          <li className="nav-item">
+            <Link className="nav-link" to="/gender">Gender</Link>
           </li>
-          <li>
-            <Link to="/accidentperweeks">Accidents per Week</Link>
+          <li className="nav-item">
+            <Link className="nav-link" to="/predict">Predict</Link>
           </li>
         </ul>
-      </nav>
-
+      </div>
+    </nav>
       <Routes>
         <Route path="/" element={<Accidents />} />
-        <Route path="/gender" element={<Gender values={gender}/>} />
-        <Route path="/accidentperweeks" element={<AccidentsByWeek />} />
+        <Route path="/gender" element={<Gender values={genderData}/>} />
+        <Route path="/predict" element={<Predict />} />
       </Routes>
     </Router>
   );

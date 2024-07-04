@@ -1,5 +1,7 @@
 import {useState, useEffect } from "react";
 import { Bar } from 'react-chartjs-2';
+import { Card } from "react-bootstrap";
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,7 +13,8 @@ import {
     Legend,
     BarElement
   } from 'chart.js';
-  
+import { AccidentSeverity } from "./AccidentSeverity";
+import { AccidentsByWeek } from "./AccidentsByWeek";
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -24,7 +27,7 @@ import {
   );
 
 export const Accidents = ()=>{
-    
+    const [loading, setLoading] = useState(true);
     const [accidentChart , setAccidentChart] = useState({});
     useEffect(() => {
         const fetchAsync = async () =>{
@@ -60,9 +63,11 @@ export const Accidents = ()=>{
                     }
                 ))
                 setAccidentChart(graph);
+                setLoading(false);
             }
             catch(error){
                 console.log('Error while fetching ', error)
+                setLoading(false);
             }
         };
         fetchAsync();
@@ -74,22 +79,54 @@ export const Accidents = ()=>{
           },
         },
       };
+
     return (
         Object.keys(accidentChart).length > 1 ? (
+            
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12">
+                    
                         <h1>Accidents</h1>
-                    </div>
-        
+                        <div class="col-6">
+                        <Card className="text-dark">
+                            <Card.Body> 
+                                <Card.Title>Accidents Severity</Card.Title>
+                                <Card.Text>
+                                    <AccidentSeverity />
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>   
+                        </div>
+                        <div class="col-6">
+                        <Card className="text-dark">
+                            <Card.Body> 
+                                <Card.Title>Accidents Per Week</Card.Title>
+                                <Card.Text>
+                                    <AccidentsByWeek />
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>  
+                        </div>
+                    
+                </div>
+                <div class="row" style={{paddingTop: '10px'}}>
                 {accidentChart.map((chart, index) => (
                     <div key={index} class="col-4">
-                        <h3>{chart.severity}</h3>
-                            <Bar data={chart.data} options={options} />
+                        <Card >
+                            <Card.Body> 
+                                <Card.Title>{chart.item} -</Card.Title>
+                                <Bar data={chart.data} options={options} />
+                            </Card.Body>
+                        </Card>
+                            
+                            
                     </div>
+                    
                 ))}
                 </div>
           </div>
-        ) : null
+        ) : (
+            loading && <div className="loader-overlay"><div className="loader"></div></div>
+        )
     )
 }

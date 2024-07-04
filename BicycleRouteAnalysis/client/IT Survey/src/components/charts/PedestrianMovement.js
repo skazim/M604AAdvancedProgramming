@@ -1,4 +1,4 @@
-import {useState, useEffect } from "react";
+import { useEffect, useState } from "react"
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -22,11 +22,10 @@ import {
     Legend,
     BarElement
   );
+export const PedestrianMovement = () =>{
 
-export const AccidentsByWeek = ()=>{
-    
-    const [accidentChart, setAccidentChart] = useState({
-    labels: [],
+    const [chart , setChart] = useState({
+        labels: [],
     datasets: [{
       label: 'Accidents by Day of Week',
       data: [],
@@ -50,36 +49,36 @@ export const AccidentsByWeek = ()=>{
       ],
       borderWidth: 1,
     }],
-  });
-    useEffect(() => {
+    });
+    useEffect(()=>{
         const fetchAsync = async () =>{
             try{
-                const response = await fetch('http://127.0.0.1:5000/getAccidentsByWeek');
-                const dataRes = await response.json();
-                const dataParsed = JSON.parse(dataRes.accidentsByWeek)
-                const labels = Object.keys(dataParsed).map(key => dataParsed[key].Day_of_week);
-                const data = Object.keys(dataParsed).map(key => dataParsed[key].Count);
-                
-                setAccidentChart({
-                    ...accidentChart,
-                    labels: labels,
-                    datasets: [{
-                      ...accidentChart.datasets[0],
-                      data: data,
-                    }],
-                  });
+            const response = await fetch('http://127.0.0.1:5000/getPedestrianMovement');
+            const dataRes = await response.json();
+            const dataParsed = JSON.parse(dataRes.pedestrianMovement)
+            const labels = Object.keys(dataParsed).map(key => dataParsed[key].Pedestrian_movement);
+            const data = Object.keys(dataParsed).map(key => dataParsed[key].count);
+
+            setChart({
+                ...chart,
+                labels: labels,
+                datasets: [{
+                  ...chart.datasets[0],
+                  data: data,
+                }],
+              });
             }
             catch(error){
-                console.log('Error while fetching ', error)
+                console.error("Error while fetching getPedestrianMovement",error)
             }
-        };
+        }
         fetchAsync();
-    },[])
+    },[]);
     return (
-        Object.keys(accidentChart).length > 1 ? (
-          <div>
-            <Bar data={accidentChart} />
-          </div>
-        ) : null
+        Object.keys(chart).length > 1 ? (
+            <div>
+              <Bar data={chart} />
+            </div>
+          ) : null
     )
 }
