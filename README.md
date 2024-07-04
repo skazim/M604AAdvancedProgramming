@@ -12,5 +12,5 @@ This project contains
 
 
 ## Usage
-- First run the flask applicaion using the command > flask run
+- First run the flask applicaion using the command > flask run --host=127.0.0.1 --port=5000
 - Second start the react application using the command > npm install; npm start
