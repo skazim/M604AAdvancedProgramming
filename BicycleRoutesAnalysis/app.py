@@ -12,7 +12,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-import json
 
 app = Flask(__name__)
 CORS(app)
@@ -42,7 +41,7 @@ def getGender():
 @app.route('/getAccidentSeverity', methods=["GET"])
 def getAccidentSeverity():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             accidentSeverity =bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Accident_severity']).size().reset_index(name='Count').to_json(orient='records')
             return jsonify(accidentSeverity=accidentSeverity)
         else:
@@ -53,7 +52,7 @@ def getAccidentSeverity():
 @app.route('/getAgeBand' ,methods=["GET"])
 def getAgeBand():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             ageBandDriver = bicycleRoutefile['Age_band_of_driver'].value_counts().sort_index().to_dict()
             ageBandCasuality = bicycleRoutefile['Age_band_of_casualty'].value_counts().sort_index().to_dict()
             return jsonify({"Age_band_of_driver" : ageBandDriver,"Age_band_of_casualty" : ageBandCasuality})
@@ -65,7 +64,7 @@ def getAgeBand():
 @app.route('/getAccidentsByWeek')
 def getAccidentsByWeek():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(accidentsByWeek=bicycleRoutefile.groupby('Day_of_week').size().reset_index(name='Count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -76,7 +75,7 @@ def getAccidentsByWeek():
 @app.route('/getPedestrianMovement')
 def getpedestrianMovement():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             bicycleRoutefile['Pedestrian_movement'] = bicycleRoutefile['Pedestrian_movement'].apply(shortText)
             return jsonify(pedestrianMovement=bicycleRoutefile.groupby('Pedestrian_movement').size().reset_index(name='count').to_json(orient='records'))
         else:
@@ -88,7 +87,7 @@ def getpedestrianMovement():
 @app.route('/getDriversEducationLevel')
 def getDriversEducationLevel():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(driversEducationLevel=bicycleRoutefile.groupby('Educational_level').size().reset_index(name='count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -98,7 +97,7 @@ def getDriversEducationLevel():
 @app.route('/getCasualitieslist')
 def getCasualitieslist():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(casualitieslist=bicycleRoutefile.groupby('Work_of_casuality').size().reset_index(name='count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -108,7 +107,7 @@ def getCasualitieslist():
 @app.route('/getTypeOfJunctions')
 def getTypeOfJunctions():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(typeOfJunctions=bicycleRoutefile.groupby('Types_of_Junction').size().reset_index(name='count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -118,7 +117,7 @@ def getTypeOfJunctions():
 @app.route('/getNumberOfCasualites')
 def getNumberOfCasualites():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(numberOfCasualites=bicycleRoutefile.groupby('Number_of_casualties').size().reset_index(name='count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -128,7 +127,7 @@ def getNumberOfCasualites():
 @app.route('/getPairPlotCasualities')
 def getPairPlotCasualities():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(pairPlotCasualities=bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Number_of_casualties']).size().reset_index(name='count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
@@ -138,7 +137,7 @@ def getPairPlotCasualities():
 @app.route('/getModelAnalysis')
 def getModelAnalysis():
     try:
-        if(bicycleRoutefile!= None):
+        if(bicycleRoutefile is not None):
             return jsonify(modelAnalysis(bicycleRoutefile))  
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
