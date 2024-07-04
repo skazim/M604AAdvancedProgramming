@@ -16,6 +16,7 @@ from sklearn.metrics import accuracy_score
 app = Flask(__name__)
 CORS(app)
 try:
+    """Reading and Extracting data locally."""
     bicycleRoutefile = pd.read_csv('./data/RTADataset.csv')
 except FileNotFoundError:
     print("File not found")
@@ -40,6 +41,12 @@ def getGender():
 
 @app.route('/getAccidentSeverity', methods=["GET"])
 def getAccidentSeverity():
+    """
+    Route to fetch info for accident severity.
+
+    Returns:
+        json: A dictionary with levels of accident severity.
+    """
     try:
         if(bicycleRoutefile is not None):
             accidentSeverity =bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Accident_severity']).size().reset_index(name='Count').to_json(orient='records')
@@ -51,6 +58,12 @@ def getAccidentSeverity():
 
 @app.route('/getAgeBand' ,methods=["GET"])
 def getAgeBand():
+    """
+    Route to fetch info for Age pf band.
+
+    Returns:
+        json: A dictionary with levels of different ages.
+    """
     try:
         if(bicycleRoutefile is not None):
             ageBandDriver = bicycleRoutefile['Age_band_of_driver'].value_counts().sort_index().to_dict()
@@ -63,17 +76,29 @@ def getAgeBand():
 
 @app.route('/getAccidentsByWeek')
 def getAccidentsByWeek():
+    """
+    Route to fetch info for accident per week.
+
+    Returns:
+        json: A dictionary with levels of weekly accidents.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(accidentsByWeek=bicycleRoutefile.groupby('Day_of_week').size().reset_index(name='Count').to_json(orient='records'))
         else:
             raise ValueError("Error while extraction data file, either file does not exist or corrupted.")
-    except Exception as e:
+    except Exception as c:
         return jsonify({"File not found, please contact admin": str(e)}), 500
 
 
 @app.route('/getPedestrianMovement')
 def getpedestrianMovement():
+    """
+    Route to fetch info for pedestrian movement around the area.
+
+    Returns:
+        json: A dictionary with levels of pedestrian movements.
+    """
     try:
         if(bicycleRoutefile is not None):
             bicycleRoutefile['Pedestrian_movement'] = bicycleRoutefile['Pedestrian_movement'].apply(shortText)
@@ -86,6 +111,12 @@ def getpedestrianMovement():
 
 @app.route('/getDriversEducationLevel')
 def getDriversEducationLevel():
+    """
+    Route to fetch info for Educations of riders.
+
+    Returns:
+        json: A dictionary with levels of education levels of drivers.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(driversEducationLevel=bicycleRoutefile.groupby('Educational_level').size().reset_index(name='count').to_json(orient='records'))
@@ -96,6 +127,12 @@ def getDriversEducationLevel():
 
 @app.route('/getCasualitieslist')
 def getCasualitieslist():
+    """
+    Route to fetch info for casualties due to accidents.
+
+    Returns:
+        json: A dictionary with levels of accident casualties.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(casualitieslist=bicycleRoutefile.groupby('Work_of_casuality').size().reset_index(name='count').to_json(orient='records'))
@@ -106,6 +143,12 @@ def getCasualitieslist():
 
 @app.route('/getTypeOfJunctions')
 def getTypeOfJunctions():
+    """
+    Route to fetch info for types of junction.
+
+    Returns:
+        json: A dictionary with types of junction.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(typeOfJunctions=bicycleRoutefile.groupby('Types_of_Junction').size().reset_index(name='count').to_json(orient='records'))
@@ -116,6 +159,12 @@ def getTypeOfJunctions():
 
 @app.route('/getNumberOfCasualites')
 def getNumberOfCasualites():
+    """
+    Route to fetch info for number of casualties.
+
+    Returns:
+        json: A dictionary with casualties.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(numberOfCasualites=bicycleRoutefile.groupby('Number_of_casualties').size().reset_index(name='count').to_json(orient='records'))
@@ -126,6 +175,13 @@ def getNumberOfCasualites():
     
 @app.route('/getPairPlotCasualities')
 def getPairPlotCasualities():
+    """
+    Route to fetch info for pair plot between 
+    Number of vehicles and Number of casualties.
+
+    Returns:
+        json: A dictionary with pair plot data.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(pairPlotCasualities=bicycleRoutefile.groupby(['Number_of_vehicles_involved', 'Number_of_casualties']).size().reset_index(name='count').to_json(orient='records'))
@@ -136,6 +192,9 @@ def getPairPlotCasualities():
 
 @app.route('/getModelAnalysis')
 def getModelAnalysis():
+    """
+    Performing model and algo analysis for better scoring and performance.
+    """
     try:
         if(bicycleRoutefile is not None):
             return jsonify(modelAnalysis(bicycleRoutefile))  
@@ -172,6 +231,9 @@ def modelAnalysis(bicycleRoutefile):
 
     
 def findModelAccuracy(models,x,y):
+    """
+    applying model and find scoring and matrix for these models
+    """
     xtr,xte,ytr,yte=train_test_split(x,y,test_size=0.2,random_state=0)
     res = {}
     for name,model in models.items():
@@ -183,6 +245,9 @@ def findModelAccuracy(models,x,y):
     return res  
 
 def shortText(text):
+    """
+    Shortening the text to make plotting look better
+    """
     short = {
         'Not a Pedestrian': 'Not Pedestrain',
         'Crossing from driver\'s nearside' : 'Crossing',

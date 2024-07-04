@@ -3,6 +3,9 @@ from sklearn.linear_model import LogisticRegression
 from app import modelAnalysis,findModelAccuracy,shortText
 
 
+"""
+Test cases for model analysis
+"""
 def test_findModelAccuracy():
     x = pd.DataFrame({'A': [1, 2, 3, 4, 5], 'B': [2, 3, 4, 5, 6]})
     y = pd.Series([0, 0, 1, 1, 1])

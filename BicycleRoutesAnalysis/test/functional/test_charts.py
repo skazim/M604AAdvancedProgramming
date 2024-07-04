@@ -4,6 +4,9 @@ from flask.testing import FlaskClient
 from app import app
 
 
+"""
+Test cases for generating analytical charts
+"""
 @pytest.fixture
 def client() -> FlaskClient:
     app.config['TESTING'] = True
