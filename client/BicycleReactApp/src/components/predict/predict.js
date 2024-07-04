@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer,Cell } from 'recharts';
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 
@@ -26,6 +26,12 @@ export const Predict = () => {
           };
         fetchData();
       }, []);
+
+      const getMaxAccuracy = (data) => {
+        return Math.max(...data.map(item => item.accuracy));
+      };
+    
+      const maxAccuracy = getMaxAccuracy(data);
   return (
     Object.keys(data).length > 1 ? (
         <div style={{ width: '100%', height: 400 }}>
@@ -36,7 +42,14 @@ export const Predict = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="accuracy" fill="#8884d8" />
+          <Bar dataKey="accuracy" name="Models Prediction Chart " fill="#8884d8">
+          {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.accuracy === maxAccuracy ? 'red' : '#8884d8'}
+                />
+              ))}
+            </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

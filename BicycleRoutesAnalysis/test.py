@@ -1,36 +1,78 @@
-from flask import Flask, render_template, jsonify
-from flask_cors import CORS
-import pandas as pd
+import pytest
+from flask import Flask
+from flask.testing import FlaskClient
+from app import app
 
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-app = Flask(__name__)
-CORS(app)
-data = pd.read_csv('./data/RTADataset.csv')
-data.columns = ["Year", "Age", "Gender","City","Position","Years of experience","Germany Experience","Seniority level","Tech program language",
-                       "Other Language","Yearly salary","Yearly bonus and stocks", "Salary one year ago","Bonus and stocks last year","Vacation days",
-                       "Employment_status","Сontract_duration","Language","Company size","Company type","Job loss COVID","Kurzarbeit","Monetary Support"]
-data.columns = data.columns.str.replace(' ','_') 
-data=data.dropna(subset=['Age','Gender','Position','Years_of_experience','Seniority_level','Salary_one_year_ago','Language']) 
-data=data.drop_duplicates()
+def testClient(client: FlaskClient):
+    response = client.get('/')
+    assert response.status_code == 200
 
+def testGetGraphList(client: FlaskClient):
+    response = client.get('/graphList')
+    assert response.status_code == 200
+    assert response.json == ['Gender', 'Accident Severity']
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/getColumns')
-def getColumns():
-    columns = data.columns.tolist()
-    return jsonify(columns)
-
-@app.route('/getAgeAndExperienceWiseChart')
-def getAgeAndExperienceWiseChart():
-    yoE = data['Years_of_experience'].tolist()
-    age = data['Age'].tolist()
-    gender = data['Gender'].tolist()
-    chart = {
-        "yearsOfExperience": yoE,
-        "age": age,
-        "gender": gender
+def testGetGender(client: FlaskClient):
+    response = client.get('/getGender')
+    assert response.status_code == 200
+    assert response.json == {
+        "category": ['Women', 'Men', 'Children'],
+        "count": [50, 80, 30]
     }
-    return jsonify(chart)
+
+def testGetAccidentSeverity(client: FlaskClient):
+    response = client.get('/getAccidentSeverity')
+    assert response.status_code == 200
+    assert 'accidentSeverity' in response.json
+
+def testGetAgeBand(client: FlaskClient):
+    response = client.get('/getAgeBand')
+    assert response.status_code == 200
+    # Assuming the data format
+    assert 'Age_band_of_driver' in response.json
+    assert 'Age_band_of_casualty' in response.json
+
+def testGetAccidentsByWeek(client: FlaskClient):
+    response = client.get('/getAccidentsByWeek')
+    assert response.status_code == 200
+    assert 'accidentsByWeek' in response.json
+
+def testGetPedestrianMovement(client: FlaskClient):
+    response = client.get('/getPedestrianMovement')
+    assert response.status_code == 200
+    assert 'pedestrianMovement' in response.json
+
+def testGetDriversEducationLevel(client: FlaskClient):
+    response = client.get('/getDriversEducationLevel')
+    assert response.status_code == 200
+    assert 'driversEducationLevel' in response.json
+
+def testGetCasualitieslist(client: FlaskClient):
+    response = client.get('/getCasualitieslist')
+    assert response.status_code == 200
+    assert 'casualitieslist' in response.json
+
+def testGetTypeOfJunctions(client: FlaskClient):
+    response = client.get('/getTypeOfJunctions')
+    assert response.status_code == 200
+    assert 'typeOfJunctions' in response.json
+
+def testGetNumberOfCasualites(client: FlaskClient):
+    response = client.get('/getNumberOfCasualites')
+    assert response.status_code == 200
+    assert 'numberOfCasualites' in response.json
+
+def testGetPairPlotCasualities(client: FlaskClient):
+    response = client.get('/getPairPlotCasualities')
+    assert response.status_code == 200
+    assert 'pairPlotCasualities' in response.json
+
+def testGetModelAnalysis(client: FlaskClient):
+    response = client.get('/getModelAnalysis')
+    assert response.status_code == 200
+    assert isinstance(response.json, dict)

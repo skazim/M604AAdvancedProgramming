@@ -98,7 +98,7 @@ export const Gender = ({values})=>{
         <div class="row" style={{paddingTop: '10px'}}>
           <div class="col-4"></div>
           <div class="col-4">
-          <AgeBand />
+          {/* <AgeBand /> */}
           </div>
           <div class="col-4"></div>
         </div>
