@@ -17,7 +17,7 @@ The goal is to promote safer and more efficient cycling routes by analyzing infr
 
 
 To run the application, make sure `export FLASK_APP=app` is already provided
-- flask run
+- flask run --host=127.0.0.1 --port=5000
 
 
 ## Unit test Cases
