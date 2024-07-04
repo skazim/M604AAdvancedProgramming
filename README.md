@@ -1,3 +1,7 @@
+# Contributors
+- Syed Kazim Hussain GH1029160
+- Akanksha Mahajan GH1032076
+
 # M604AAdvancedProgramming
 This project contains
 - BicycleRoutesAnalysis works as server which is build over flask app
